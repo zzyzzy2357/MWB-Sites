@@ -1,0 +1,52 @@
+name: 提交一个中转站
+description: 分享你常用且能正常访问的中转站（只需要公开信息）
+title: "[站点分享] "
+labels: ["site-submission"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        只填写公开信息，**不要**填账号、密码、API Key。
+        提交后机器人会自动校验地址并合并，重复的会被跳过。
+  - type: input
+    id: name
+    attributes:
+      label: 站点名称
+      placeholder: 例如 云雾 API
+    validations:
+      required: true
+  - type: input
+    id: url
+    attributes:
+      label: 站点地址
+      placeholder: https://api.example.com
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: 站点类型
+      options:
+        - NewApi
+        - OneApi
+        - Sub2Api
+        - Generic
+        - Plaza
+      default: 0
+  - type: input
+    id: rate
+    attributes:
+      label: 充值比例（1 元买多少美元额度，不知道填 1）
+      placeholder: "1"
+  - type: textarea
+    id: note
+    attributes:
+      label: 备注（选填）
+      placeholder: 例如 稳定性、模型覆盖、是否有签到
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: 确认
+      options:
+        - label: 我确认该站点可以正常访问，且内容里不含账号密码
+          required: true

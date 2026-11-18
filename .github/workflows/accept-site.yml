@@ -10,14 +10,19 @@ permissions:
 
 jobs:
   accept:
-    # 只处理带 site-submission 标签的 issue
-    if: contains(github.event.issue.labels.*.name, 'site-submission')
+    # 带 site-submission 标签，或软件「分享到公共站点库」生成的 JSON / 表单内容
+    # （外部用户没有打标签的权限，所以不能只靠标签判断）
+    if: >-
+      contains(github.event.issue.labels.*.name, 'site-submission') ||
+      contains(github.event.issue.body, '"baseUrl"') ||
+      contains(github.event.issue.body, '### 站点地址')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
       - name: 解析并合并站点
         id: merge
+        continue-on-error: true
         env:
           ISSUE_BODY: ${{ github.event.issue.body }}
         run: python3 scripts/merge_site.py
@@ -29,6 +34,7 @@ jobs:
           git config user.email "bot@users.noreply.github.com"
           git add sites.json
           git commit -m "site: add from #${{ github.event.issue.number }}"
+          git pull --rebase --autostash origin main
           git push
 
       - name: 回帖并关闭 issue
@@ -38,8 +44,8 @@ jobs:
             const added = '${{ steps.merge.outputs.added }}' === '1';
             const reason = '${{ steps.merge.outputs.reason }}';
             const text = added
-              ? '已收录，感谢分享。其他人在软件的「导入 → 云端站点库」里填本仓库的 sites.json 地址就能看到。'
-              : (reason === 'duplicate' ? '这个站点已经在库里的，跳过。' : '没有解析到有效站点，请检查地址。');
+              ? '已收录，感谢分享。其他人在软件的「导入 → 云端站点库」里拉取就能看到这个站。'
+              : (reason === 'duplicate' ? '这个站点已经在库里了，跳过。' : '没有解析到有效站点，请检查地址格式（需要 http/https 开头）。');
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,

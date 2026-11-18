@@ -41,11 +41,14 @@ https://cdn.jsdelivr.net/gh/zzyzzy2357/MWB-Sites@main/sites.json
 [新建 issue](https://github.com/zzyzzy2357/MWB-Sites/issues/new/choose) → 选「提交一个中转站」，
 按表单填，不填账号密码（也不需要）。
 
-提交后会带上 `site-submission` 标签，维护者校验、去重后合并进 `sites.json`，一般一天内生效。
+提交后机器人会自动：
 
-> 想全自动？把 [MWB/community](https://github.com/zzyzzy2357/MWB/tree/main/community)
-> 里的 `.github/workflows/accept-site.yml` 拷到本仓库的同名路径，开启 Actions 的
-> read & write 权限即可自动校验、去重、合并（脚本已做字段白名单，账号密码写不进来）。
+1. 只取白名单字段 `name / baseUrl / kind / rechargeRate / note`
+2. 校验地址是 http(s) 且域名合法
+3. 按域名归一化去重，重复的跳过
+4. 合并进 `sites.json`，回帖并关闭 issue
+
+一般一分钟内生效，拉取时带缓存的话最多等几分钟。
 
 ## 收录规则
 
